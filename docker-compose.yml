@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  database:
+    image: mongo:latest
+    restart: always
+    ports:
+      - 27017:27017
+    networks:
+      - default
+    env_file:
+      - .env
+    volumes:
+      - ./data/db:/data/db
+
+  backend_api:
+    build:
+      context: ./backend/api
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+        - 8000:8000
+    networks:
+      - default
+    env_file:
+      - .env
+    depends_on:
+      - database
+
+  backend_fill:
+    build:
+      context: ./backend/service
+      dockerfile: Dockerfile
+    restart: no
+    networks:
+      - default
+    env_file:
+      - .env
+    depends_on:
+      - database
+      - backend_api
+
+networks:
+  default:
+    driver: bridge
