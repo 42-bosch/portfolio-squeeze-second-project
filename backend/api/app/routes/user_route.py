@@ -1,38 +1,37 @@
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import JSONResponse
 
-from app.database import collection
 from app.schemas.user_schema import (
-    serialize_user,
-    serialize_users,
-    UserBaseSchema,
     UserCreateSchema,
-    UserResponseSchema,
-    UsersResponseSchema,
 )
+
+
+import app.controllers.user_controller as user_controller
 
 user_router = APIRouter(prefix="/user")
 
 
-@user_router.get("/", response_model=UsersResponseSchema)
-def get_users() -> UsersResponseSchema:
-    users = collection.find()
-    if users is None:
-        raise HTTPException(status_code=404, detail="No users found")
-
-    return UsersResponseSchema(
-        status="success",
-        users=serialize_users(users),
+@user_router.get("/")
+def get_users() -> JSONResponse:
+    users = user_controller.get_users()
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={"status": "success", "users": users},
     )
 
 
-@user_router.post("/", response_model=UserResponseSchema)
-def create_user(user: UserCreateSchema) -> UserResponseSchema:
-    user = collection.insert_one(user.dict())
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not created")
-
+@user_router.post("/")
+def create_user(user: UserCreateSchema) -> JSONResponse:
+    response = user_controller.create_user(user)
     return JSONResponse(
         status_code=status.HTTP_201_CREATED,
-        content="User created successfully",
+        content={"status": "success", "message": response},
+    )
+
+@user_router.get("/{name}")
+def get_user_by_name(name: str) -> JSONResponse:
+    user = user_controller.get_user_by_name(name)
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={"status": "success", "user": user},
     )

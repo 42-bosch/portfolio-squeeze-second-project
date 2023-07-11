@@ -8,30 +8,25 @@ def serialize_user(user) -> dict:
     return {
         "id": str(user.get("_id")),
         "name": user.get("name"),
-        "createdAt": user.get("createdAt"),
-        "updatedAt": user.get("updatedAt"),
+        "createdAt": str(user.get("createdAt")),
+        "updatedAt": str(user.get("updatedAt")),
     }
 
 
 def serialize_users(users) -> list:
+
     return [serialize_user(user) for user in users]
 
 
 class UserBaseSchema(BaseModel):
     id: str | None = None
     name: Optional[str] = None
-    createdAt: datetime | None = None
-    updatedAt: datetime | None = None
+    createdAt: datetime = datetime.utcnow()
+    updatedAt: datetime = datetime.utcnow()
 
     @validator("createdAt", "updatedAt", pre=True, always=True)
     def default_datetime(cls, value: datetime) -> datetime:
         return value or datetime.now()
-
-    @validator("name")
-    def name_must_not_be_empty(cls, value: str) -> str:
-        if not value:
-            raise ValueError("Name must not be empty")
-        return value
 
     class Config:
         orm_mode = True
