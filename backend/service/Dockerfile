@@ -1,20 +1,23 @@
 FROM python:3.11
 
+WORKDIR /app
+COPY . .
+
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PYTHONIOENCODING=utf-8
+    PYTHONIOENCODING=utf-8 \
+    PATH_EXCEL="temp"
 
 RUN apt-get update && \
     apt-get install -y curl && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 
-WORKDIR /app
-
-COPY . .
-
 RUN pip install poetry && \
     poetry config virtualenvs.create false && \
     poetry install --no-dev --no-interaction --no-ansi
 
-CMD ["poetry", "run", "python", "source/main.py"]
+HEALTHCHECK --interval=5s --timeout=3s \
+  CMD curl --fail http://database:27017/ || exit 1
+
+CMD ["poetry", "run", "python", "app/main.py"]
