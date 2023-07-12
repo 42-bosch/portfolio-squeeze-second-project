@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo
+    restart: always
+    command: mongod --bind_ip_all --quiet
+    ports:
+      - 27017:27017
+    networks:
+      - default
+    env_file:
+      - .env
+    volumes:
+      - ./data/db:/data/db
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    networks:
+      - default
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+
+  backend_api:
+    build:
+      context: ./backend/api
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+        - 8000:8000
+    networks:
+      - default
+    volumes:
+      - ./backend/api:/app
+    depends_on:
+      - mongo
+
+  # backend_fill:
+  #   build:
+  #     context: ./backend/service
+  #     dockerfile: Dockerfile
+  #   restart: no
+  #   networks:
+  #     - default
+  #   depends_on:
+  #     - mongo
+  #     - backend_api
+
+networks:
+  default:
+    driver: bridge
