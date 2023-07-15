@@ -1,4 +1,5 @@
 import pandas as pd
+from pymongo import MongoClient
 
 class ReadExcel:
     def __init__(self, path, sheets_amount=0):
@@ -39,3 +40,12 @@ class ReadExcel:
     def get_sheet(self, sheet_number):
         return self._sheets[sheet_number]
 
+    def insert_into_mongodb(self, collection_name="makers", db_name="clients_db", host="localhost", port=27017):
+        client = MongoClient(host, port)
+        db = client[db_name]
+        collection = db[collection_name]
+
+        for dataframe in self._sheets:
+            records = dataframe.to_dict(orient="records")
+
+            collection.insert_many(records)
