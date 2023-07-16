@@ -32,24 +32,28 @@ services:
       dockerfile: Dockerfile
     restart: always
     ports:
-        - 8000:8000
+      - 8000:8000
     networks:
       - default
     volumes:
       - ./backend/api:/app
+      - ./cache:/cache
     depends_on:
       - mongo
 
-  # backend_fill:
-  #   build:
-  #     context: ./backend/service
-  #     dockerfile: Dockerfile
-  #   restart: no
-  #   networks:
-  #     - default
-  #   depends_on:
-  #     - mongo
-  #     - backend_api
+  backend_fill:
+    build:
+      context: ./backend/service
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      - default
+    depends_on:
+      - mongo
+      - backend_api
+    volumes:
+      - ./backend/service:/app
+      - ./cache:/cache
 
 networks:
   default:

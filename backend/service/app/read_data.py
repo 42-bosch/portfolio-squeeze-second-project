@@ -1,6 +1,7 @@
 import pandas as pd
 from typing import List
 
+
 class ExcelReader:
     def __init__(self, file_path, num_sheets=0):
         self.file_path = file_path
@@ -24,7 +25,9 @@ class ExcelReader:
         if self.num_sheets == 0:
             num_sheets_to_read = total_sheets
         elif self.num_sheets > total_sheets:
-            raise ValueError("The number of sheets to read is greater than the number of sheets in the file.")
+            raise ValueError(
+                "The number of sheets to read is greater than the number of sheets in the file."
+            )
         else:
             num_sheets_to_read = self.num_sheets
 

@@ -1,13 +1,16 @@
 import time
-import os
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+
+from filldata import ExcelToDatabase
 
 
 class MyHandler(FileSystemEventHandler):
     def on_created(self, event):
         if event.src_path.endswith(".xlsx"):
-            print("File is an Excel file")
+            print(f"File created: {event.src_path}")
+            excel_to_database = ExcelToDatabase(event.src_path)
+            excel_to_database.import_to_database()
 
     def on_deleted(self, event):
         pass
@@ -34,5 +37,5 @@ def start_observer(directory, timeout=1):
 
 
 if __name__ == "__main__":
-    directory_to_watch = "temp/"
+    directory_to_watch = "/cache"
     start_observer(directory_to_watch)
