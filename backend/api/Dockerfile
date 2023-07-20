@@ -17,6 +17,6 @@ RUN pip install poetry && \
     poetry install --no-dev --no-interaction --no-ansi
 
 HEALTHCHECK --interval=5s --timeout=3s \
-  CMD curl --fail http://database:27017/ || exit 1
+    CMD curl --fail http://database:27017/ || exit 1
 
-CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--reload"]
+CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]

@@ -1,26 +1,34 @@
 from datetime import datetime
-from pydantic import BaseModel, validator
-from typing import List, Optional
+from pydantic import BaseModel, validator, EmailStr
+from typing import List, Optional, Union
 from bson.objectid import ObjectId
 
 
-def serialize_user(user) -> dict:
-    return {
-        "id": str(user.get("_id")),
+def serialize_user(user: Union[dict, None]) -> dict:
+    if not user:
+        return None
+
+    serialized_user = {
         "name": user.get("name"),
+        "email": user.get("email"),
         "createdAt": str(user.get("createdAt")),
         "updatedAt": str(user.get("updatedAt")),
     }
+    return serialized_user
 
 
-def serialize_users(users) -> list:
+def serialize_users(users: List[dict]) -> List[dict]:
+    if not users:
+        return None
 
-    return [serialize_user(user) for user in users]
+    serialized_users = [serialize_user(user) for user in users]
+    return serialized_users
 
 
 class UserBaseSchema(BaseModel):
-    id: str | None = None
-    name: Optional[str] = None
+    name: str
+    email: EmailStr
+    hashedPassword: str
     createdAt: datetime = datetime.utcnow()
     updatedAt: datetime = datetime.utcnow()
 
@@ -35,8 +43,11 @@ class UserBaseSchema(BaseModel):
         json_encoders = {ObjectId: str}
 
 
-class UserCreateSchema(UserBaseSchema):
-    pass
+class UserCreateSchema(BaseModel):
+    email: EmailStr
+    name: str
+    password: str
+    confirmPassword: str
 
 
 class UserResponseSchema(BaseModel):

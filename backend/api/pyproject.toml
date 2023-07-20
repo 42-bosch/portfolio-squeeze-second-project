@@ -6,11 +6,12 @@ authors = ["Lucas Pires <piresnogueiralucas@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
-fastapi = "^0.99.1"
+python = "^3.11"
+fastapi = "^0.100.0"
 uvicorn = {extras = ["standard"], version = "^0.22.0"}
 pymongo = "^4.4.0"
 motor = "^3.2.0"
+
 python-dotenv = "^1.0.0"
 
 

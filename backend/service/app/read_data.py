@@ -19,7 +19,7 @@ class ExcelReader:
     def _read_dataframes(self) -> List[pd.DataFrame]:
         total_sheets = len(self.sheet_names)
         num_sheets_to_read = self.num_sheets
-        dataframes = []
+        dataframes : List[pd.DataFrame] = []
 
         if self.num_sheets == 0:
             num_sheets_to_read = total_sheets

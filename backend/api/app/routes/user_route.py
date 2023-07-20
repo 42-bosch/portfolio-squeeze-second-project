@@ -1,12 +1,9 @@
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import JSONResponse
 
-from app.schemas.user_schema import (
-    UserCreateSchema,
-)
-
-
 import app.controllers.user_controller as user_controller
+from app.schemas.user_schema import UserCreateSchema, UserBaseSchema
+
 
 user_router = APIRouter(prefix="/user")
 
@@ -22,7 +19,14 @@ def get_users() -> JSONResponse:
 
 @user_router.post("/")
 def create_user(user: UserCreateSchema) -> JSONResponse:
-    response = user_controller.create_user(user)
+    new_user = UserBaseSchema(
+        name=user.name,
+        email=user.email,
+        hashedPassword=user.password,
+    )
+
+
+    response = user_controller.create_user(new_user)
     return JSONResponse(
         status_code=status.HTTP_201_CREATED,
         content={"status": "success", "message": response},
