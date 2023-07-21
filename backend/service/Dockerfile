@@ -1,12 +1,11 @@
-FROM python:3.11
+FROM python:3.11-slim
 
 WORKDIR /app
 COPY . .
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PYTHONIOENCODING=utf-8 \
-    PATH_EXCEL="temp"
+    PYTHONIOENCODING=utf-8
 
 RUN apt-get update && \
     apt-get install -y curl && \
