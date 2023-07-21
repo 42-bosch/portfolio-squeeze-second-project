@@ -4,7 +4,7 @@ from dotenv import dotenv_values
 config = dotenv_values(".env")
 
 client = MongoClient(config["DB_URL"])
-database = client["eaaaaxcel"]
+database = client["project2"]
 
 
 def verify_connection():
