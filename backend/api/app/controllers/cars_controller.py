@@ -19,8 +19,6 @@ def create_car(car: CarCreateSchema) -> dict:
         collection.insert_one(new_maker)
     return {"message": "Car created successfully"}
 
-def get_car_by_model(model: str) -> list:
-    return serialize_cars(collection.find({"maker.cars.model": model}))
 
 def get_cars_by_maker(maker_name: str) -> list:
     maker_data = collection.find_one({"maker.name": maker_name})
@@ -29,3 +27,13 @@ def get_cars_by_maker(maker_name: str) -> list:
             status_code=status.HTTP_404_NOT_FOUND, detail="Maker not found"
         )
     return serialize_cars(maker_data.get("maker").get("cars", []))
+
+
+def delete_car(car_id: str) -> dict:
+    car = collection.find_one({"_id": car_id})
+    if not car:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Car not found"
+        )
+    collection.delete_one({"_id": car_id})
+    return {"message": "Car deleted successfully"}

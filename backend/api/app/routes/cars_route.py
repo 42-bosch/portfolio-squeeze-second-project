@@ -22,13 +22,6 @@ def create_car(car: CarCreateSchema) -> JSONResponse:
         content={"status": "success", "message": response},
     )
 
-# @cars_router.get("/{model}")
-# def get_car_by_model(model: str) -> JSONResponse:
-#     car = cars_controller.get_car_by_model(model)
-#     return JSONResponse(
-#         status_code=status.HTTP_200_OK,
-#         content={"status": "success", "car": car},
-#     )
 
 @cars_router.get("/maker/{maker_name}")
 def get_cars_by_maker(maker_name: str) -> JSONResponse:
@@ -36,4 +29,13 @@ def get_cars_by_maker(maker_name: str) -> JSONResponse:
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={"status": "success", "cars": cars},
+    )
+
+
+@cars_router.delete("/{car_id}")
+def delete_car(car_id: str) -> JSONResponse:
+    response = cars_controller.delete_car(car_id)
+    return JSONResponse(
+        status_code=status.HTTP_202_ACCEPTED,
+        content={"status": "success", "message": response},
     )
