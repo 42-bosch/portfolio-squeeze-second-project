@@ -14,7 +14,7 @@ import app.controllers.user_controller as user_controller
 user_router = APIRouter(prefix="/user")
 
 
-@user_router.get("/" , dependencies=[Depends(verify_token)])
+@user_router.get("/", dependencies=[Depends(verify_token)])
 def get_users() -> JSONResponse:
     users = user_controller.get_users()
     return JSONResponse(
@@ -37,11 +37,11 @@ def login_user(user: OAuth2PasswordRequestForm = Depends()) -> JSONResponse:
     response = user_controller.login_user(user)
     return JSONResponse(
         status_code=status.HTTP_201_CREATED,
-        content={"status": "success", "message": response},
+        content=response,
     )
 
 
-@user_router.post("/uploadexcel" , dependencies=[Depends(verify_token)])
+@user_router.post("/uploadexcel", dependencies=[Depends(verify_token)])
 def upload_excel(file: UploadFile = File(...)):
     with open(f"/cache/{file.filename}", "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)

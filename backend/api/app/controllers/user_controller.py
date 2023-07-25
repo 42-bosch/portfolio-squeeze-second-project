@@ -45,27 +45,18 @@ def get_user_by_username(username: str) -> list:
 
 
 def login_user(user: UserLoginSchema, expires_delta: int = 30):
-    try:
-        user_data = collection_users.find_one({"username": user.username})
-        if not user_data:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-
-        if user.password != user_data["password"]:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect password",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-    except Exception:
+    db_user = collection_users.find_one({"username": user.username})
+    if not db_user:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error",
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
+    if db_user["password"] != user.password:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
     access_token_expires = datetime.utcnow() + timedelta(minutes=expires_delta)
     payload = {"sub": user.username, "exp": access_token_expires}
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
