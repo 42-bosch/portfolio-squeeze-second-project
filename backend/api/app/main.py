@@ -25,3 +25,8 @@ if verify_connection():
 else:
     print("Database connection failed ❌")
     raise HTTPException(status_code=500, detail="Database connection failed ❌")
+
+
+@app.get("/api/healthchecker")
+def root():
+    return {"message": "The API is LIVE!!"}
