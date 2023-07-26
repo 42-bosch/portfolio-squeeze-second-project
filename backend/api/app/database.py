@@ -1,11 +1,15 @@
-from dotenv import dotenv_values
 from pymongo import MongoClient
+from .config import MONGO_DETAILS
 
-config = dotenv_values(".env")
+client = MongoClient(MONGO_DETAILS)
+database = client["project2_fastapi"]
 
-client = MongoClient(config["DB_URL"])
-database = client.test
-collection = database.users
+
+collection_users = database["users"]
+collection_cars = database["cars"]
+
+
+collection_users.create_index("username", unique=True)
 
 
 def verify_connection():
@@ -14,4 +18,3 @@ def verify_connection():
         return True
     except:
         return False
-
